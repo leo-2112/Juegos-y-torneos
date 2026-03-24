@@ -1,4 +1,4 @@
-﻿using Juegos.API.DTOs;
+using Juegos.API.DTOs;
 using Juegos.API.Models;
 using Google.Cloud.Firestore;
 using System.Security.Cryptography;
@@ -344,6 +344,60 @@ public class AuthService : IAuthService
         catch (Exception ex)
         {
             _logger.LogError($"Error al generar token: {ex.Message}");
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// UpdateProfile: Actualiza la información personal del perfil de un jugador
+    /// </summary>
+    public async Task<Player> UpdateProfile(string playerId, UpdateProfileDto updateDto)
+    {
+        try
+        {
+            if (updateDto == null)
+            {
+                throw new ArgumentException("Los datos de actualización son requeridos");
+            }
+            if (string.IsNullOrWhiteSpace(updateDto.FirstName) || (string.IsNullOrWhiteSpace(updateDto.LastName)))
+            {
+                throw new ArgumentException("El nombre y apellido son requerido");
+            }
+            if (updateDto.Age <= 0)
+            {
+                throw new ArgumentException("La edad no puede ser 0 o negativa");
+            }
+            if (string.IsNullOrWhiteSpace(updateDto.Country))
+            {
+                throw new ArgumentException("El país es requerido");
+            }
+
+            var playersCollection = _firebaseService.GetCollection("players");
+            var docRef = playersCollection.Document(playerId);
+            var doc = await docRef.GetSnapshotAsync();
+
+            if (!doc.Exists)
+            {
+                throw new InvalidOperationException("El Jugador no fue encontrado");
+            }
+
+            var updates = new Dictionary<string, object>
+            {
+                { "FirstName", updateDto.FirstName },
+                { "LastName", updateDto.LastName },
+                { "Age", updateDto.Age },
+                { "Country", updateDto.Country }
+            };
+
+            await docRef.UpdateAsync(updates);
+
+            var updatedPlayer = await GetPlayerById(playerId);
+            if (updatedPlayer == null) throw new InvalidOperationException("Error recuperando el jugador actualizado");
+            return updatedPlayer;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error en UpdateProfile: {ex.Message}");
             throw;
         }
     }

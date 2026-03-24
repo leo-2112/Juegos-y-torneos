@@ -1,4 +1,4 @@
-﻿namespace Juegos.API.Services;
+namespace Juegos.API.Services;
 using Juegos.API.DTOs;
 using Juegos.API.Models;
 
@@ -63,4 +63,5 @@ public interface IAuthService
 
     string GenerateJwtToken(Player player);
 
+    Task<Player> UpdateProfile(string playerId, UpdateProfileDto updateDto);
 }

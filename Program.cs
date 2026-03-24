@@ -10,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 // REGISTRAR SERVICIOS
 // ============================================
 builder.Services.AddSingleton<FirebaseService>();
+builder.Services.AddScoped<IJuegosService, JuegosService>();
+builder.Services.AddScoped<ITournamentService, TournamentService>();
 
 // ============================================
 // CONFIGURAR AUTENTICACIÓN JWT

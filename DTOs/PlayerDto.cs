@@ -1,4 +1,4 @@
-﻿namespace Juegos.API.DTOs;
+namespace Juegos.API.DTOs;
 
 public class PlayerDto
 {
@@ -98,4 +98,12 @@ public class AuthResponseDto
      * User va extraer la informacion del usuario autenticado
      */
     public PlayerDto Player { get; set; } = new PlayerDto();
+}
+
+public class UpdateProfileDto
+{
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public int Age { get; set; }
+    public string Country { get; set; } = string.Empty;
 }
